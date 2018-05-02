@@ -78,6 +78,7 @@
 
     ext.test = function(){
         console.log("hoge");
+        device.send("1,0,1\r\n");
     };
 
     var descriptor = {
