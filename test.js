@@ -78,7 +78,9 @@
 
     ext.test = function(){
         console.log("hoge");
-        device.send("1,0,1\r\n");
+        
+        device.send((new TextEncoder).encode(
+            "1,0,1,255,255,255,100\r\n"));
     };
 
     var descriptor = {
