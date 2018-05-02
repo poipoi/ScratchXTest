@@ -52,7 +52,7 @@
         console.log("connect");
         device.set_receive_handler(function(data) {
             rawData = new Uint8Array(data);
-            console.log(rawData.join());
+            console.log(String.fromCharCode(rawData));
         });
     }
     
@@ -72,12 +72,12 @@
     };
 
     ext.L3D_Stop = function(){
-        var cmd = arrToBuff([1, 0, 1, r, g, b, speed]);
+        var cmd = arrToBuff([0]);
         device.send(cmd.buffer);
     };
 
     ext.L3D_Wave_Start = function(){
-        var cmd = arrToBuff([0]);
+        var cmd = arrToBuff([1, 0, 1]);
         device.send(cmd.buffer);
     };
 
