@@ -23,6 +23,20 @@
 (function(ext){
     var device = null;
     var rawData = null;
+    
+    function BubbleParam(x = 3, y = 3, z = 3, r1 = 255, g1 = 255, b1 = 255, r2 = 255, g2 = 255, b2 = 255, r = 255) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.r1 = r1;
+        this.g1 = g1;
+        this.b1 = b1;
+        this.r2 = r2;
+        this.g2 = g2;
+        this.b2 = b2;
+        this.r = r;
+    }
+    var bubbleParam = new bubbleParam();
 
     function strToBuff(str) {
         var arr = new Uint8Array(str.length);
@@ -102,13 +116,34 @@
     };
     
     ext.L3D_Bubble_Start = function() {
-        var cmd = arrToBuff([1, 2]);
+        var cmd = arrToBuff([1, 2, bubbleParam.x, bubbleParam.y, bubbleParam.z, bubbleParam.r1, bubbleParam.g1, bubbleParam.b1, bubbleParam.r2, bubbleParam.g2, bubbleParam.b2, bubbleParam.r]);
         device.send(cmd.buffer);
     }
     
-    ext.L3D_Bubble_All = function(x, y, z, r1, g1, b1, r2, g2, b2, r) {
-        var cmd = arrToBuff([1, 2, x, y, z, r1, g1, b1, r2, g2, b2, r]);
-        device.send(cmd.buffer);
+    ext.L3D_Bubble_SetPosition = function(x, y, z) {
+        bubbleParam.x = x;
+        bubbleParam.y = y;
+        bubbleParam.z = z;
+    }
+    
+    ext.L3D_Bubble_SetStartColor = function(r, g, b) {
+        bubbleParam.r1 = r;
+        bubbleParam.g1 = g;
+        bubbleParam.b1 = b;
+    }
+
+    ext.L3D_Bubble_SetEndColor = function(r, g, b) {
+        bubbleParam.r2 = r;
+        bubbleParam.g2 = g;
+        bubbleParam.b2 = b;
+    }
+    
+    ext.L3D_Bubble_SetRadius = function(r) {
+        bubbleParam.r = r;
+    }
+    
+    ext.L3D_Bubble_Clear = function() {
+        bubbleParam = new BubbleParam();
     }
     
     var descriptor = {
@@ -120,8 +155,11 @@
             ["", "L3DCube 波 赤:%d 緑:%d 青:%d 速さ:%d", "L3D_Wave_All", 255, 255, 255, 100],
             ["", "L3DCube 波 ストップ", "L3D_Wave_Stop"],
             ["", "L3DCube 花火 発射", "L3D_Bubble_Start"],
-            ["", "L3DCube 花火 X:%d, Y:%d, Z:%d, 赤(始):%d, 緑(始):%d, 青(始):%d, 赤(終):%d, 緑(終):%d, 青(終):%d, 半径:%d", "L3D_Bubble_All", 3, 3, 3, 255, 255, 255, 255, 255, 255, 5],
-            ["", "L3DCube "]
+            ["", "L3DCube 花火 位置設定, X:%d, Y:%d, Z:%d", "L3D_Bubble_SetPosition", 3, 3, 3],
+            ["", "L3DCube 花火 始まりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetStartColor", 255, 255, 255],
+            ["", "L3DCube 花火 終わりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetEndColor", 255, 255, 255],
+            ["", "L3DCube 花火 半径設定 %d", "L3D_Bubble_SetRadius", 5],
+            ["", "L3DCube 花火 設定を消す", "L3D_Bubble_Clear"],
         ],
         menus: {},
         url: 'http://localhost:9000'
