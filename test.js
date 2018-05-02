@@ -100,15 +100,28 @@
         var cmd = arrToBuff([1, 0, 0]);
         device.send(cmd.buffer);
     };
-
+    
+    ext.L3D_Bubble_Start = function() {
+        var cmd = arrToBuff([1, 2]);
+        device.send(cmd.buffer);
+    }
+    
+    ext.L3D_Bubble_All = function(x, y, z, r1, g1, b1, r2, g2, b2, r) {
+        var cmd = arrToBuff([1, 2, x, y, z, r1, g1, b1, r2, g2, b2, r]);
+        device.send(cmd.buffer);
+    }
+    
     var descriptor = {
         blocks: [
-            ["", "L3DCube Stop", "L3D_Stop"],
-            ["", "L3DCube Wave Start", "L3D_Wave_Start"],
-            ["", "L3DCube Wave R:%d G:%d B:%d", "L3D_Wave_Color", 255, 255, 255],
-            ["", "L3DCube Wave Speed:%d", "L3D_Wave_Speed", 100],
-            ["", "L3DCube Wave R:%d G:%d B:%d Speed:%d", "L3D_Wave_All", 255, 255, 255, 100],
-            ["", "L3DCube Wave Stop", "L3D_Wave_Stop"],
+            ["", "L3DCube ストップ", "L3D_Stop"],
+            ["", "L3DCube 波 スタート", "L3D_Wave_Start"],
+            ["", "L3DCube 波 赤:%d 緑:%d 青:%d", "L3D_Wave_Color", 255, 255, 255],
+            ["", "L3DCube 波 速さ:%d", "L3D_Wave_Speed", 100],
+            ["", "L3DCube 波 赤:%d 緑:%d 青:%d 速さ:%d", "L3D_Wave_All", 255, 255, 255, 100],
+            ["", "L3DCube 波 ストップ", "L3D_Wave_Stop"],
+            ["", "L3DCube 花火 発射", "L3D_Bubble_Start"],
+            ["", "L3DCube 花火 X:%d, Y:%d, Z:%d, 赤(始):%d, 緑(始):%d, 青(始):%d, 赤(終):%d, 緑(終):%d, 青(終):%d, 半径:%d", "L3D_Bubble_All", 3, 3, 3, 255, 255, 255, 255, 255, 255, 5],
+            ["", "L3DCube "]
         ],
         menus: {},
         url: 'http://localhost:9000'
