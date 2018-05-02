@@ -36,7 +36,7 @@
         this.b2 = b2;
         this.r = r;
     }
-    var bubbleParam = new bubbleParam();
+    var bubbleParam = new BubbleParam();
 
     function strToBuff(str) {
         var arr = new Uint8Array(str.length);
