@@ -52,7 +52,7 @@
         console.log("connect");
         device.set_receive_handler(function(data) {
             rawData = new Uint8Array(data);
-            console.log(rawData.map(c => String.fromCharCode(c)).join());
+            console.log(rawData.map(c => String.fromCharCode(c)).join(''));
         });
     }
     
