@@ -23,12 +23,13 @@
 (function(ext){
     var device = null;
     var rawData = null;
-    
-    function appendBuffer( buffer1, buffer2) {
-        var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
-        tmp.set(new Uint8Array(buffer1), 0);
-        tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
-        return tmp.buffer;
+
+    function strToBuff(str) {
+        var arr = new Uint8Array(str.length);
+        for (var i in [...Array(str.length).keys()]) {
+            arr[i]= str.charCodeAt(i);
+        }
+        return arr;
     }
     
     var potentialDevices = [];
@@ -76,26 +77,14 @@
         return { status: 2, msg: 'bord connected' };
     };
 
-    ext.test = function(){
-        console.log("hoge");
-        var cmd = new Uint8Array(7);
-        cmd[0] = 0x31;
-        cmd[1] = 0x2c;
-        cmd[2] = 0x30;
-        cmd[3] = 0x2c;
-        cmd[4] = 0x31;
-        cmd[5] = 0x0d;
-        cmd[6] = 0x0a;
+    ext.L3D_Wave = function(r, g, b, speed){
+        var cmd = strToBuff("1,0,1\r\n");
         device.send(cmd.buffer);
-        /*
-        device.send((new TextEncoder).encode(
-            "1,0,1,255,255,255,100\r\n"));
-        */
     };
 
     var descriptor = {
         blocks: [
-        ["",  "テスト", "test"]
+        ["",  "L3DCube 波 R:%d G:%d B:%d Speed:%d", "L3D_Wave"]
         ],
         menus: {},
         url: 'http://localhost:9000'

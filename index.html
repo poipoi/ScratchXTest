@@ -1,0 +1,16 @@
+<html>
+<head></head>
+<body>
+    <a id="link" href="" target=_blank>link</a>
+</body>
+
+<script type="text/javascript">
+    var tmps = location.href.split('/');
+    tmps.pop();
+    var exturl = tmps.join('/') + '/test.js';
+    var linkurl = "https://scratchx.org/?url=" + exturl
+    target = document.getElementById("link");
+    target.href = linkurl;
+</script>
+
+</html>
