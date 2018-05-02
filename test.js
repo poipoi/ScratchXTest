@@ -51,18 +51,8 @@
         device.open( { bitRate: 115200, dataBits: 8, parityBit: 0, stopBits: 0, ctsFlowControl: 0 });
         console.log("connect");
         device.set_receive_handler(function(data) {
-//            if (!rawData) rawData = new Uint8Array(data);
-//            else rawData = rawData.concat(data);
-//            else rawData = appendBuffer(rawData, data);
             rawData = new Uint8Array(data);
-
             console.log(rawData.join());
-            /*
-            if (data[data.length - 1] == 0x0a) {
-                console.log(rawData);
-                rawData = [];
-            }
-            */
         });
     }
     
@@ -81,14 +71,39 @@
         return { status: 2, msg: 'bord connected' };
     };
 
-    ext.L3D_Wave = function(r, g, b, speed){
+    ext.L3D_Stop = function(){
         var cmd = arrToBuff([1, 0, 1, r, g, b, speed]);
+        device.send(cmd.buffer);
+    };
+
+    ext.L3D_Wave_Start = function(){
+        var cmd = arrToBuff([0]);
+        device.send(cmd.buffer);
+    };
+
+    ext.L3D_Wave_Color = function(r, g, b){
+        var cmd = arrToBuff([1, 0, 1, r, g, b]);
+        device.send(cmd.buffer);
+    };
+
+    ext.L3D_Wave_Speed = function(speed){
+        var cmd = arrToBuff([1, 0, 1, -1, -1, -1, speed]);
+        device.send(cmd.buffer);
+    };
+    
+    ext.L3D_Wave_Stop = function(){
+        var cmd = arrToBuff([1, 0, 0]);
         device.send(cmd.buffer);
     };
 
     var descriptor = {
         blocks: [
-            ["",  "L3DCube 波 R:%d G:%d B:%d Speed:%d", "L3D_Wave", 255, 255, 255, 100]
+            ["", "L3DCube Stop", "L3D_Stop"],
+            ["", "L3DCube Wave Start", "L3D_Wave_Start"],
+            ["", "L3DCube Wave R:%d G:%d B:%d", "L3D_Wave_Color", 255, 255, 255],
+            ["", "L3DCube Wave Speed:%d", "L3D_Wave_Speed", 100],
+            ["", "L3DCube Wave R:%d G:%d B:%d Speed:%d", "L3D_Wave_All", 255, 255, 255, 100],
+            ["", "L3DCube Wave Stop", "L3D_Wave_Stop"],
         ],
         menus: {},
         url: 'http://localhost:9000'
