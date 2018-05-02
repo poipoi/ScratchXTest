@@ -78,9 +78,17 @@
 
     ext.test = function(){
         console.log("hoge");
-        
+        var cmd = new Uint8Array(5);
+        cmd[0] = 0x31;
+        cmd[1] = 0x2c;
+        cmd[2] = 0x30;
+        cmd[3] = 0x2c;
+        cmd[4] = 0x31;
+        device.send(cmd.buffer);
+        /*
         device.send((new TextEncoder).encode(
             "1,0,1,255,255,255,100\r\n"));
+        */
     };
 
     var descriptor = {
