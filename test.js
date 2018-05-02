@@ -32,6 +32,10 @@
         return arr;
     }
     
+    function arrToBuff(arr) {
+        return strToBuff(arr.map(n => n.toString()).join(',') + "\r\n");
+    }
+    
     var potentialDevices = [];
     ext._deviceConnected = function(dev){
         potentialDevices.push(dev);
@@ -78,13 +82,13 @@
     };
 
     ext.L3D_Wave = function(r, g, b, speed){
-        var cmd = strToBuff("1,0,1\r\n");
+        var cmd = arrToBuff([1, 0, 1, r, g, b, speed]);
         device.send(cmd.buffer);
     };
 
     var descriptor = {
         blocks: [
-        ["",  "L3DCube 波 R:%d G:%d B:%d Speed:%d", "L3D_Wave"]
+            ["",  "L3DCube 波 R:%d G:%d B:%d Speed:%d", "L3D_Wave", 255, 255, 255, 100]
         ],
         menus: {},
         url: 'http://localhost:9000'
