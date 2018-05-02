@@ -78,12 +78,14 @@
 
     ext.test = function(){
         console.log("hoge");
-        var cmd = new Uint8Array(5);
+        var cmd = new Uint8Array(7);
         cmd[0] = 0x31;
         cmd[1] = 0x2c;
         cmd[2] = 0x30;
         cmd[3] = 0x2c;
         cmd[4] = 0x31;
+        cmd[5] = 0x0d;
+        cmd[6] = 0x0a;
         device.send(cmd.buffer);
         /*
         device.send((new TextEncoder).encode(
