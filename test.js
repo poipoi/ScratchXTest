@@ -159,7 +159,7 @@
             ["", "L3DCube 花火 始まりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetStartColor", 255, 255, 255],
             ["", "L3DCube 花火 終わりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetEndColor", 255, 255, 255],
             ["", "L3DCube 花火 半径設定 %d", "L3D_Bubble_SetRadius", 5],
-            ["", "L3DCube 花火 設定を消す", "L3D_Bubble_Clear"],
+            ["", "L3DCube 花火 設定を元に戻す", "L3D_Bubble_Clear"],
         ],
         menus: {},
         url: 'http://localhost:9000'
