@@ -289,7 +289,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube 花火 半径設定 %d", "L3D_Bubble_SetRadius", 5],
             ["", "L3DCube 花火 設定を元に戻す", "L3D_Bubble_Clear"],
             ["", "L3DCube ボール 表示", "L3D_Ball_Start"],
-            ["", "L3DCube ボール 位置指定 X:%d, Y:%d, Z:Bd", "L3D_Ball_SetPosition", 3, 3, 3],
+            ["", "L3DCube ボール 位置指定 X:%d, Y:%d, Z:%d", "L3D_Ball_SetPosition", 3, 3, 3],
             ["", "L3DCube ボール 色設定 R:%d, G:%d, B:%d", "L3D_Ball_SetColor", 255, 255, 255],
             ["", "L3DCube ボール 半径指定 %d", "L3D_Ball_SetRadius", 0],
             ["", "L3DCube ボール 前に進む", "L3D_Ball_Go"],
