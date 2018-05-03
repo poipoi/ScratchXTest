@@ -93,7 +93,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.pos = this.startPos.mulByMatrix4(this.transform);
     };
     
-    BallParam.send = function() {
+    BallParam.prototype.send = function() {
         var cmd = null;
         if (this.isVisible) {
             cmd = arrToBuff([1, 3, 1, this.pos.x, this.pos.y, this.pos.z, this.r, this.g, this.b, this.radius]);
