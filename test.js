@@ -96,7 +96,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     BallParam.prototype.send = function() {
         var cmd = null;
         if (this.isVisible) {
-            cmd = arrToBuff([1, 3, 1, this.pos.x, this.pos.y, this.pos.z, this.r, this.g, this.b, this.radius]);
+            cmd = arrToBuff([1, 3, 1, parseInt(this.pos.x), parseInt(this.pos.y), parseInt(this.pos.z), this.r, this.g, this.b, this.radius]);
         } else {
             cmd = arrToBuff([1, 3, 0])
         }
