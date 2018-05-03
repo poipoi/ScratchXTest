@@ -21,6 +21,9 @@
 */
 
 (function(ext){
+    document.write("<script type='text/javascript' src='poipoi.github.io/ScratchXTest/includetest.js'></script>");
+
+    window.onload = function() { alert(resText);};
     var device = null;
     var rawData = null;
     
