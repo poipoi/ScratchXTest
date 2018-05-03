@@ -94,14 +94,15 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
     
     BallParam.prototype.send = function() {
-        var cmd = null;
+        var cmdArr = null;
         if (this.isVisible) {
-            cmd = arrToBuff([1, 3, 1, parseInt(this.pos.x), parseInt(this.pos.y), parseInt(this.pos.z), this.r, this.g, this.b, this.radius]);
+            cmdArr = [1, 3, 1, Math.round(this.pos.x), Math.round(this.pos.y), Math.round(this.pos.z), this.r, this.g, this.b, this.radius];
         } else {
-            cmd = arrToBuff([1, 3, 0])
+            cmdArr = [1, 3, 0];
         }
         
-        if (cmd) {
+        if (cmdArr) {
+            var cmd = arrToBuff(cmdArr);
             device.send(cmd.buffer);
         }
     }
