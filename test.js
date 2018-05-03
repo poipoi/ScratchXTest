@@ -49,6 +49,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.g2 = g2;
         this.b2 = b2;
         this.r = r;
+        this.isVisible = false;
     }
     var bubbleParam = new BubbleParam();
     
@@ -91,6 +92,19 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.transform = this.transform.rotateX(Math.PI / 2);
         this.pos = this.startPos.mulByMatrix4(this.transform);
     };
+    
+    BallParam.send = function() {
+        var cmd = null;
+        if (this.isVisible) {
+            cmd = arrToBuff([1, 3, 1, this.pos.x, this.pos.y, this.pos.z, this.r, this.g, this.b, this.radius]);
+        } else {
+            cmd = arrToBuff([1, 3, 0])
+        }
+        
+        if (cmd) {
+            device.send(cmd.buffer);
+        }
+    }
 
     var ballParam = new BallParam();
 
@@ -205,31 +219,33 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     }
     
     ext.L3D_Ball_Start = function() {
+        ballParam.isVisible = true;
         console.log(ballParam.pos.values);
-        var cmd = arrToBuff([1, 3, 1, ballParam.pos.x, ballParam.pos.y, ballParam.pos.z, ballParam.r, ballParam.g, ballParam.b, ballParam.radius]);
-        device.send(cmd.buffer);
+        ballParam.send();
     }
 
     ext.L3D_Ball_SetPosition = function(x, y, z) {
         ballParam.init(x, y, z);
         console.log(ballParam.pos.values);
+        ballParam.send();
     }
     
     ext.L3D_Ball_SetColor = function(r, g, b) {
         ballParam.r = r;
         ballParam.g = g;
         ballParam.b = b;
+        ballParam.send();
     }
     
     ext.L3D_Ball_SetRadius = function(r) {
         ballParam.radius = r;
+        ballParam.send();
     }
     
     ext.L3D_Ball_Go = function() {
         ballParam.go();
         console.log(ballParam.pos.values);
-        var cmd = arrToBuff([1, 3, 1, ballParam.pos.x, ballParam.pos.y, ballParam.pos.z, ballParam.r, ballParam.g, ballParam.b, ballParam.radius]);
-        device.send(cmd.buffer);
+        ballParam.send();
     }
 
     ext.L3D_Ball_RotateLeft = function() {
@@ -254,8 +270,8 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     
     ext.L3D_Ball_Stop = function() {
         console.log("Ball Stop");
-        var cmd = arrToBuff([1, 3, 0]);
-        device.send(cmd.buffer);
+        ballParam.isVisible = false;
+        ballParam.send();
     }
 
     var descriptor = {
