@@ -52,8 +52,47 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     }
     var bubbleParam = new BubbleParam();
     
-    var ballPos = new Vector4(0, 0, 0, 1);
-    var ballTransform = Matrix4.identity();
+    function BallParam(x = 3, y = 3, z = 3, r = 255, g = 255, b = 255, radius = 0) {
+        this.init(x, y, z);
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.radius = radius;
+    }
+    
+    BallParam.prototype.init = function(x = 3, y = 3, z = 3) {
+        this.startPos = new Vector4(0, 0, 0, 1);
+        this.transform = Matrix4.identity();
+        this.transform = this.transform.translate(x, y, z);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    }
+    
+    BallParam.prototype.go = function() {
+        this.transform = this.transform.translate(0, 0, 1);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    };
+
+    BallParam.prototype.turnLeft = function() {
+        this.transform = this.transform.rotateY(Math.PI / 2);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    };
+
+    BallParam.prototype.turnRight = function() {
+        this.transform = this.transform.rotateY(-Math.PI / 2);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    };
+
+    BallParam.prototype.turnUp = function() {
+        this.transform = this.transform.rotateX(-Math.PI / 2);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    };
+
+    BallParam.prototype.turnDown = function() {
+        this.transform = this.transform.rotateX(Math.PI / 2);
+        this.pos = this.startPos.mulByMatrix4(this.transform);
+    };
+
+    var ballParam = new BallParam();
 
     function strToBuff(str) {
         var arr = new Uint8Array(str.length);
@@ -165,44 +204,58 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         bubbleParam = new BubbleParam();
     }
     
-    ext.L3D_Ball_Start = function(x, y, z) {
-        ballPos = new Vector4(x, y, z, 1);
-        ballTransform = Matrix4.identity();
-        console.log(ballPos.values);
+    ext.L3D_Ball_Start = function() {
+        console.log(ballParam.pos.values);
+        var cmd = arrToBuff([1, 3, 1, ballParam.pos.x, ballParam.pos.y, ballParam.pos.z, ballParam.r, ballParam.g, ballParam.b, ballParam.radius]);
+        device.send(cmd.buffer);
+    }
+
+    ext.L3D_Ball_SetPosition = function(x, y, z) {
+        ballParam.init(x, y, z);
+        console.log(ballParam.pos.values);
+    }
+    
+    ext.L3D_Ball_SetColor = function(r, g, b) {
+        ballParam.r = r;
+        ballParam.g = g;
+        ballParam.b = b;
+    }
+    
+    ext.L3D_Ball_SetRadius = function(r) {
+        ballParam.radius = r;
     }
     
     ext.L3D_Ball_Go = function() {
-        ballTransform = ballTransform.translate(0, 0, 1);
-        var newPos = ballPos.mulByMatrix4(ballTransform);
-        console.log(newPos.values);
+        ballParam.go();
+        console.log(ballParam.pos.values);
+        var cmd = arrToBuff([1, 3, 1, ballParam.pos.x, ballParam.pos.y, ballParam.pos.z, ballParam.r, ballParam.g, ballParam.b, ballParam.radius]);
+        device.send(cmd.buffer);
     }
 
     ext.L3D_Ball_RotateLeft = function() {
-        ballTransform = ballTransform.rotateY(Math.PI / 2);
-        var newPos = ballPos.mulByMatrix4(ballTransform);
-        console.log(newPos.values);
+        ballParam.turnLeft();
+        console.log(ballParam.pos.values);
     }
 
     ext.L3D_Ball_RotateRight = function() {
-        ballTransform = ballTransform.rotateY(-Math.PI / 2);
-        var newPos = ballPos.mulByMatrix4(ballTransform);
-        console.log(newPos.values);
+        ballParam.turnRight();
+        console.log(ballParam.pos.values);
     }
 
     ext.L3D_Ball_RotateUp = function() {
-        ballTransform = ballTransform.rotateX(-Math.PI / 2);
-        var newPos = ballPos.mulByMatrix4(ballTransform);
-        console.log(newPos.values);
+        ballParam.turnUp();
+        console.log(ballParam.pos.values);
     }
 
     ext.L3D_Ball_RotateDown = function() {
-        ballTransform = ballTransform.rotateX(Math.PI / 2);
-        var newPos = ballPos.mulByMatrix4(ballTransform);
-        console.log(newPos.values);
+        ballParam.turnDown();
+        console.log(ballParam.pos.values);
     }
     
     ext.L3D_Ball_Stop = function() {
         console.log("Ball Stop");
+        var cmd = arrToBuff([1, 3, 0]);
+        device.send(cmd.buffer);
     }
 
     var descriptor = {
@@ -219,13 +272,16 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube 花火 終わりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetEndColor", 255, 255, 255],
             ["", "L3DCube 花火 半径設定 %d", "L3D_Bubble_SetRadius", 5],
             ["", "L3DCube 花火 設定を元に戻す", "L3D_Bubble_Clear"],
-            ["", "L3DCube ボール スタート X:%d, Y:%d, Z:%d", "L3D_Ball_Start", 3, 3, 3],
+            ["", "L3DCube ボール 表示", "L3D_Ball_Start"],
+            ["", "L3DCube ボール 位置指定 X:%d, Y:%d, Z:Bd", "L3D_Ball_SetPosition", 3, 3, 3],
+            ["", "L3DCube ボール 色設定 R:%d, G:%d, B:%d", "L3D_Ball_SetColor", 255, 255, 255],
+            ["", "L3DCube ボール 半径指定 %d", "L3D_Ball_SetRadius", 0],
             ["", "L3DCube ボール 前に進む", "L3D_Ball_Go"],
             ["", "L3DCube ボール 左を向く", "L3D_Ball_RotateLeft"],
             ["", "L3DCube ボール 右を向く", "L3D_Ball_RotateRight"],
             ["", "L3DCube ボール 上を向く", "L3D_Ball_RotateUp"],
             ["", "L3DCube ボール 下を向く", "L3D_Ball_RotateDown"],
-            ["", "L3DCube ボール ストップ", "L3D_Ball_Stop"],
+            ["", "L3DCube ボール 消す", "L3D_Ball_Stop"],
         ],
         menus: {},
         url: 'http://localhost:9000'
