@@ -155,11 +155,6 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         device.send(cmd.buffer);
     };
     
-    ext.L3D_Wave_All = function(r, g, b, speed){
-        var cmd = arrToBuff([1, 0, 1, r, g, b, speed]);
-        device.send(cmd.buffer);
-    };
-    
     ext.L3D_Wave_Stop = function(){
         var cmd = arrToBuff([1, 0, 0]);
         device.send(cmd.buffer);
@@ -258,7 +253,6 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube 波 スタート", "L3D_Wave_Start"],
             ["", "L3DCube 波 赤:%d 緑:%d 青:%d", "L3D_Wave_Color", 255, 255, 255],
             ["", "L3DCube 波 速さ:%d", "L3D_Wave_Speed", 100],
-            ["", "L3DCube 波 赤:%d 緑:%d 青:%d 速さ:%d", "L3D_Wave_All", 255, 255, 255, 100],
             ["", "L3DCube 波 ストップ", "L3D_Wave_Stop"],
             ["", "L3DCube 花火 発射", "L3D_Bubble_Start"],
             ["", "L3DCube 花火 位置設定, X:%d, Y:%d, Z:%d", "L3D_Bubble_SetPosition", 3, 3, 3],
