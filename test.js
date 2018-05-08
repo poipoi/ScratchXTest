@@ -158,7 +158,6 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
 
     ext.L3D_Stop = function(){
         console.log('stop');
-        console.log(testText);
         var cmd = arrToBuff([0]);
         device.send(cmd.buffer);
     };
