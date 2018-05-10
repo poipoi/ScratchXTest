@@ -362,7 +362,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         dotParam.b = b;
     }
     
-    ext.L3D_Dot_Elase = function() {
+    ext.L3D_Dot_Erase = function() {
         dotParam.clear();
     }
     
