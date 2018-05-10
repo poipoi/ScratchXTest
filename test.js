@@ -80,7 +80,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     
     
     function BallParam(x = 3, y = 3, z = 3, r = 255, g = 255, b = 255, radius = 0) {
-        this.init(x, y, z);
+        this.setPosition(x, y, z);
         this.r = r;
         this.g = g;
         this.b = b;
@@ -92,7 +92,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.r = 255;
         this.g = 255;
         this.b = 255;
-        this.radius = radius();
+        this.radius = 0;
     }
     
     BallParam.prototype.setPosition = function(x = 3, y = 3, z = 3) {
