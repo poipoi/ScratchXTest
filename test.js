@@ -16,7 +16,35 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     var device = null;
     var rawData = null;
     
-    function BubbleParam(x = 3, y = 3, z = 3, r1 = 255, g1 = 255, b1 = 255, r2 = 255, g2 = 255, b2 = 255, r = 255) {
+    function WaveParam(r = 255, g = 255, b = 255, speed = 100) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.speed = speed;
+        this.isVisible = false;
+    };
+    
+    WaveParam.prototype.init = function() {
+        this.r = 255;
+        this.g = 255;
+        this.b = 255;
+        this.speed = 100;
+    };
+    
+    WaveParam.prototype.send = function() {
+        if (isVisible) {
+            var cmd = arrToBuff([1, 0, 1, this.r, this.g, this.b, this.speed]);
+            device.send(cmd.buffer);
+        } else {
+            var cmd = arrToBuff([1, 0, 0]);
+            device.send(cmd.buffer);            
+        }
+    };
+    
+    var waveParam = new WaveParam();
+    
+    
+    function BubbleParam(x = 3, y = 3, z = 3, r1 = 255, g1 = 255, b1 = 255, r2 = 255, g2 = 255, b2 = 255, r = 5) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -28,8 +56,28 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.b2 = b2;
         this.r = r;
         this.isVisible = false;
-    }
+    };
+    
+    BubbleParam.prototype.init = function() {
+        this.x = 3;
+        this.y = 3;
+        this.z = 3;
+        this.r1 = 255;
+        this.g1 = 255;
+        this.b1 = 255;
+        this.r2 = 255;
+        this.g2 = 255;
+        this.b2 = 255;
+        this.r = 5;
+    };
+    
+    BubbleParam.prototype.send = function() {
+        var cmd = arrToBuff([1, 2, this.x, this.y, this.z, this.r1, this.g1, this.b1, this.r2, this.g2, this.b2, this.r]);
+        device.send(cmd.buffer);
+    };
+    
     var bubbleParam = new BubbleParam();
+    
     
     function BallParam(x = 3, y = 3, z = 3, r = 255, g = 255, b = 255, radius = 0) {
         this.init(x, y, z);
@@ -37,14 +85,14 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.g = g;
         this.b = b;
         this.radius = radius;
-    }
+    };
     
     BallParam.prototype.init = function(x = 3, y = 3, z = 3) {
         this.startPos = new Vector4(0, 0, 0, 1);
         this.transform = Matrix4.identity();
         this.transform = this.transform.translate(x, y, z);
         this.pos = this.startPos.mulByMatrix4(this.transform);
-    }
+    };
     
     BallParam.prototype.go = function() {
         this.transform = this.transform.translate(0, 0, 1);
@@ -83,21 +131,22 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             var cmd = arrToBuff(cmdArr);
             device.send(cmd.buffer);
         }
-    }
+    };
 
     var ballParam = new BallParam();
 
+    
     function strToBuff(str) {
         var arr = new Uint8Array(str.length);
         for (var i in [...Array(str.length).keys()]) {
             arr[i]= str.charCodeAt(i);
         }
         return arr;
-    }
+    };
     
     function arrToBuff(arr) {
         return strToBuff(arr.map(n => n.toString()).join(',') + "\r\n");
-    }
+    };
     
     var potentialDevices = [];
     ext._deviceConnected = function(dev){
@@ -117,7 +166,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             rawData = new Uint8Array(data);
             console.log(rawData.map(c => String.fromCharCode(c)).join(''));
         });
-    }
+    };
     
     ext._deviceRemoved = function(dev){
         if(device != dev) return;
@@ -141,111 +190,117 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
 
     ext.L3D_Wave_Start = function(){
-        var cmd = arrToBuff([1, 0, 1]);
-        device.send(cmd.buffer);
+        waveParam.isVible = true;
+        waveParam.send();
     };
 
     ext.L3D_Wave_Color = function(r, g, b){
-        var cmd = arrToBuff([1, 0, 1, r, g, b]);
-        device.send(cmd.buffer);
+        waveParam.r = r;
+        waveParam.g = g;
+        waveParam.b = b;
+        waveParam.send();
     };
 
     ext.L3D_Wave_Speed = function(speed){
-        var cmd = arrToBuff([1, 0, 1, -1, -1, -1, speed]);
-        device.send(cmd.buffer);
+        waveParam.speed = speed;
+        waveParam.send();
     };
     
     ext.L3D_Wave_Stop = function(){
-        var cmd = arrToBuff([1, 0, 0]);
-        device.send(cmd.buffer);
+        waveParam.isVisible = false;
+        waveParam.send();
+    };
+    
+    ext.L3D_Wave_Clear = function() {
+        waveParam.init();
+        waveParam.send();
     };
     
     ext.L3D_Bubble_Start = function() {
-        var cmd = arrToBuff([1, 2, bubbleParam.x, bubbleParam.y, bubbleParam.z, bubbleParam.r1, bubbleParam.g1, bubbleParam.b1, bubbleParam.r2, bubbleParam.g2, bubbleParam.b2, bubbleParam.r]);
-        device.send(cmd.buffer);
-    }
+        bubbleParam.send();
+    };
     
     ext.L3D_Bubble_SetPosition = function(x, y, z) {
         bubbleParam.x = x;
         bubbleParam.y = y;
         bubbleParam.z = z;
-    }
+    };
     
     ext.L3D_Bubble_SetStartColor = function(r, g, b) {
         bubbleParam.r1 = r;
         bubbleParam.g1 = g;
         bubbleParam.b1 = b;
-    }
+    };
 
     ext.L3D_Bubble_SetEndColor = function(r, g, b) {
         bubbleParam.r2 = r;
         bubbleParam.g2 = g;
         bubbleParam.b2 = b;
-    }
+    };
     
     ext.L3D_Bubble_SetRadius = function(r) {
         bubbleParam.r = r;
-    }
+    };
     
     ext.L3D_Bubble_Clear = function() {
-        bubbleParam = new BubbleParam();
-    }
+        bubbleParam.init();
+    };
     
     ext.L3D_Ball_Start = function() {
         ballParam.isVisible = true;
         console.log(ballParam.pos.values);
         ballParam.send();
-    }
+    };
 
     ext.L3D_Ball_SetPosition = function(x, y, z) {
         ballParam.init(x, y, z);
         console.log(ballParam.pos.values);
         ballParam.send();
-    }
+    };
     
     ext.L3D_Ball_SetColor = function(r, g, b) {
         ballParam.r = r;
         ballParam.g = g;
         ballParam.b = b;
         ballParam.send();
-    }
+    };
     
     ext.L3D_Ball_SetRadius = function(r) {
         ballParam.radius = r;
         ballParam.send();
-    }
+    };
     
     ext.L3D_Ball_Go = function() {
         ballParam.go();
         console.log(ballParam.pos.values);
         ballParam.send();
-    }
+    };
 
     ext.L3D_Ball_RotateLeft = function() {
         ballParam.turnLeft();
         console.log(ballParam.pos.values);
-    }
+    };
 
     ext.L3D_Ball_RotateRight = function() {
         ballParam.turnRight();
         console.log(ballParam.pos.values);
-    }
+    };
 
     ext.L3D_Ball_RotateUp = function() {
         ballParam.turnUp();
         console.log(ballParam.pos.values);
-    }
+    };
 
     ext.L3D_Ball_RotateDown = function() {
         ballParam.turnDown();
         console.log(ballParam.pos.values);
-    }
+    };
     
     ext.L3D_Ball_Stop = function() {
         console.log("Ball Stop");
         ballParam.isVisible = false;
         ballParam.send();
-    }
+    };
 
     var descriptor = {
         blocks: [
@@ -254,6 +309,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube 波 赤:%d 緑:%d 青:%d", "L3D_Wave_Color", 255, 255, 255],
             ["", "L3DCube 波 速さ:%d", "L3D_Wave_Speed", 100],
             ["", "L3DCube 波 ストップ", "L3D_Wave_Stop"],
+            ["", "L3DCube 波 設定を元に戻す", "L3D_Wave_Clear"],
             ["", "L3DCube 花火 発射", "L3D_Bubble_Start"],
             ["", "L3DCube 花火 位置設定, X:%d, Y:%d, Z:%d", "L3D_Bubble_SetPosition", 3, 3, 3],
             ["", "L3DCube 花火 始まりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetStartColor", 255, 255, 255],
