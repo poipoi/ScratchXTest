@@ -142,7 +142,38 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
 
     var ballParam = new BallParam();
+    
+    
+    function DotParam(x = 3, y = 3, z = 3, r = 255, g = 255, b = 255) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    };
 
+    DotParam.prototype.init = function() {
+        this.x = 3;
+        this.y = 3;
+        this.z = 3;
+        this.r = 255;
+        this.g = 255;
+        this.b = 255;
+    };
+    
+    DotParam.prototype.send = function() {
+        var cmd = arrToBuff([1, 4, 1, this.x, this.y, this.z, this.r, this.g, this.b]);
+        device.send(cmd);
+    };
+    
+    DotParam.prototype.clear = function() {
+        var cmd = arrToBuff([1, 4, 0]);
+        device.send(cmd);
+    };
+    
+    var dotParam = new DotParam();
+    
     
     function strToBuff(str) {
         var arr = new Uint8Array(str.length);
@@ -314,6 +345,30 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         ballParam.init();
         ballParam.send();
     }
+    
+    ext.L3D_Dot_Add = function() {
+        dotParam.send();
+    }
+    
+    ext.L3D_Dot_SetPosition = function(x, y, z) {
+        dotParam.x = x;
+        dotParam.y = y;
+        dotParam.z = z;
+    }
+    
+    ext.L3D_Dot_SetColor = function(r, g, b) {
+        dotParam.r = r;
+        dotParam.g = g;
+        dotParam.b = b;
+    }
+    
+    ext.L3D_Dot_Elase = function() {
+        dotParam.clear();
+    }
+    
+    ext.L3D_Dot_Clear = function() {
+        dotParam.init();
+    }
 
     var descriptor = {
         blocks: [
@@ -339,7 +394,12 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube ボール 上を向く", "L3D_Ball_RotateUp"],
             ["", "L3DCube ボール 下を向く", "L3D_Ball_RotateDown"],
             ["", "L3DCube ボール 消す", "L3D_Ball_Stop"],
-            ["", "L3DCube ボール 設定を元に戻す", "L3D_Ball_Clear"]
+            ["", "L3DCube ボール 設定を元に戻す", "L3D_Ball_Clear"],
+            ["", "L3DCube ドット 追加", "L3D_Dot_Add"],
+            ["", "L3DCube ドット 位置指定 X:%d, Y:%d, Z:%d", "L3D_Dot_SetPosition", 3, 3, 3],
+            ["", "L3DCube ドット 色指定 赤:%d, 緑:%d, 青:%d", "L3D_Dot_SetColor", 255, 255, 255],
+            ["", "L3DCube ドット 全て消す", "L3D_Dot_Erase"],
+            ["", "L3DCube ドット 設定を元に戻す", "L3D_Dot_Clear"],
         ],
         menus: {},
         url: 'http://localhost:9000'
