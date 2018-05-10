@@ -190,7 +190,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
 
     ext.L3D_Wave_Start = function(){
-        waveParam.isVible = true;
+        waveParam.isVisible = true;
         waveParam.send();
     };
 
