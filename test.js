@@ -269,6 +269,9 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         bubbleParam.r1 = r;
         bubbleParam.g1 = g;
         bubbleParam.b1 = b;
+        bubbleParam.r2 = r;
+        bubbleParam.g2 = g;
+        bubbleParam.b2 = b;
     };
 
     ext.L3D_Bubble_SetEndColor = function(r, g, b) {
@@ -380,7 +383,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube 波 設定を元に戻す", "L3D_Wave_Clear"],
             ["", "L3DCube 花火 発射", "L3D_Bubble_Start"],
             ["", "L3DCube 花火 位置設定, X:%d, Y:%d, Z:%d", "L3D_Bubble_SetPosition", 3, 3, 3],
-            ["", "L3DCube 花火 始まりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetStartColor", 255, 255, 255],
+            ["", "L3DCube 花火 色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetStartColor", 255, 255, 255],
             ["", "L3DCube 花火 終わりの色設定 赤:%d, 緑:%d, 青:%d", "L3D_Bubble_SetEndColor", 255, 255, 255],
             ["", "L3DCube 花火 半径設定 %d", "L3D_Bubble_SetRadius", 5],
             ["", "L3DCube 花火 設定を元に戻す", "L3D_Bubble_Clear"],
