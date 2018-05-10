@@ -32,7 +32,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
     
     WaveParam.prototype.send = function() {
-        if (isVisible) {
+        if (this.isVisible) {
             var cmd = arrToBuff([1, 0, 1, this.r, this.g, this.b, this.speed]);
             device.send(cmd.buffer);
         } else {
