@@ -87,7 +87,15 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         this.radius = radius;
     };
     
-    BallParam.prototype.init = function(x = 3, y = 3, z = 3) {
+    BallParam.prototype.init = function() {
+        this.setPosition();
+        this.r = 255;
+        this.g = 255;
+        this.b = 255;
+        this.radius = radius();
+    }
+    
+    BallParam.prototype.setPosition = function(x = 3, y = 3, z = 3) {
         this.startPos = new Vector4(0, 0, 0, 1);
         this.transform = Matrix4.identity();
         this.transform = this.transform.translate(x, y, z);
@@ -253,7 +261,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
     };
 
     ext.L3D_Ball_SetPosition = function(x, y, z) {
-        ballParam.init(x, y, z);
+        ballParam.setPosition(x, y, z);
         console.log(ballParam.pos.values);
         ballParam.send();
     };
@@ -301,6 +309,11 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
         ballParam.isVisible = false;
         ballParam.send();
     };
+    
+    ext.L3D_Ball_Clear = function() {
+        ballParam.init();
+        ballParam.send();
+    }
 
     var descriptor = {
         blocks: [
@@ -326,6 +339,7 @@ Vector4.prototype.mulByMatrix4 = function(matrix) {
             ["", "L3DCube ボール 上を向く", "L3D_Ball_RotateUp"],
             ["", "L3DCube ボール 下を向く", "L3D_Ball_RotateDown"],
             ["", "L3DCube ボール 消す", "L3D_Ball_Stop"],
+            ["", "L3DCube ボール 設定を元に戻す", "L3D_Ball_Clear"]
         ],
         menus: {},
         url: 'http://localhost:9000'
